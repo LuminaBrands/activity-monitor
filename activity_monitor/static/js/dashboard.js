@@ -232,6 +232,83 @@ async function generatePlan() {
     }
 }
 
+// --- Chat History ---
+async function loadChatHistory(date) {
+    try {
+        const response = await fetch(`/api/chat-history/${date}`);
+        const data = await response.json();
+
+        // Render stats
+        setText('chat-stat-sessions', data.stats.total_sessions || 0);
+        setText('chat-stat-total-time', data.stats.total_minutes || 0);
+        setText('chat-stat-apps', data.stats.unique_apps || 0);
+
+        // Render by-app breakdown
+        renderChatByApp(data.by_app);
+
+        // Render conversations recap
+        renderConversationsRecap(data.conversations_recap);
+
+        // Render full list
+        renderChatHistoryList(data.communications);
+    } catch (err) {
+        console.error('Failed to load chat history:', err);
+    }
+}
+
+function renderChatByApp(apps) {
+    const container = document.getElementById('chat-by-app');
+    if (!container) return;
+
+    if (!apps || apps.length === 0) {
+        container.innerHTML = '<p class="placeholder">No communication apps used today.</p>';
+        return;
+    }
+
+    container.innerHTML = apps.map(app => `
+        <div class="app-item">
+            <div>
+                <span class="app-name">${escapeHtml(app.name)}</span>
+                <span class="app-category">${app.sessions} session${app.sessions !== 1 ? 's' : ''}</span>
+            </div>
+            <span class="app-time">${app.total_minutes} min</span>
+        </div>
+    `).join('');
+}
+
+function renderConversationsRecap(recap) {
+    const container = document.getElementById('chat-conversations-recap');
+    if (!container) return;
+
+    if (!recap) {
+        container.innerHTML = '<p class="placeholder">Generate a summary from the Summary page to see an AI recap of your conversations.</p>';
+        return;
+    }
+
+    container.innerHTML = markdownToHtml(recap);
+}
+
+function renderChatHistoryList(comms) {
+    const container = document.getElementById('chat-history-list');
+    if (!container) return;
+
+    if (!comms || comms.length === 0) {
+        container.innerHTML = '<p class="placeholder">No communication sessions recorded for this date.</p>';
+        return;
+    }
+
+    container.innerHTML = comms.map(c => `
+        <div class="chat-history-item">
+            <div class="chat-history-app">${escapeHtml(c.application)}</div>
+            <div class="chat-history-context">${escapeHtml(c.context || 'No context available')}</div>
+            <div class="chat-history-meta">
+                <span class="chat-history-time">${formatTime(c.timestamp)}</span>
+                <span class="chat-history-duration">${c.duration_minutes} min</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 // --- Screenshot modal ---
 function showScreenshot(src) {
     const overlay = document.createElement('div');

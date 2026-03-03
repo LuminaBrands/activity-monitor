@@ -14,6 +14,7 @@
         <ul class="nav-links">
             <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Dashboard</a></li>
             <li><a href="/timeline" class="{% if '/timeline' in request.path %}active{% endif %}">Timeline</a></li>
+            <li><a href="/chat-history" class="{% if '/chat-history' in request.path %}active{% endif %}">Chat History</a></li>
             <li><a href="/summary" class="{% if '/summary' in request.path %}active{% endif %}">Summary</a></li>
         </ul>
         <div class="sidebar-footer">
