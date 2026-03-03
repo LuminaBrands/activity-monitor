@@ -309,6 +309,248 @@ function renderChatHistoryList(comms) {
     `).join('');
 }
 
+// --- Setup Status (Dashboard) ---
+async function loadSetupStatus() {
+    const section = document.getElementById('setup-section');
+    if (!section) return;
+
+    try {
+        const response = await fetch('/api/setup-status');
+        const data = await response.json();
+
+        // Show setup section if anything is not configured
+        const dismissed = localStorage.getItem('setup-dismissed');
+        if (dismissed && data.api_key_configured && data.database_exists) {
+            section.style.display = 'none';
+            renderMonitorBar(data.monitors);
+            return;
+        }
+
+        section.style.display = 'block';
+
+        // Permissions step
+        const permIcon = document.getElementById('step-permissions-icon');
+        const permDetail = document.getElementById('permissions-detail');
+        const permPanel = document.getElementById('permissions-panel');
+
+        if (data.permissions.length > 0) {
+            const allSatisfied = data.permissions.every(p => p.satisfied !== false);
+            permIcon.innerHTML = allSatisfied ? '&#9745;' : '&#9744;';
+            permIcon.className = 'step-icon ' + (allSatisfied ? 'step-done' : '');
+            permDetail.textContent = `Platform: ${data.platform}. ${allSatisfied ? 'Permissions look good.' : 'Some permissions may need to be granted.'}`;
+
+            permPanel.style.display = 'block';
+            document.getElementById('permissions-list').innerHTML = data.permissions.map(p => `
+                <div class="permission-item ${p.satisfied === false ? 'permission-needed' : ''}">
+                    <div class="permission-name">${escapeHtml(p.name)} ${p.satisfied !== undefined ? (p.satisfied ? '<span class="perm-ok">OK</span>' : '<span class="perm-missing">Needed</span>') : ''}</div>
+                    <div class="permission-desc">${escapeHtml(p.description)}</div>
+                    <div class="permission-how">${escapeHtml(p.how)}</div>
+                    <div class="permission-for">Required for: ${p.required_for.join(', ')}</div>
+                </div>
+            `).join('');
+        } else {
+            permIcon.innerHTML = '&#9745;';
+            permIcon.className = 'step-icon step-done';
+            permDetail.textContent = 'No special permissions needed.';
+        }
+
+        // API key step
+        const apiIcon = document.getElementById('step-api-key-icon');
+        if (data.api_key_configured) {
+            apiIcon.innerHTML = '&#9745;';
+            apiIcon.className = 'step-icon step-done';
+        }
+
+        // Monitors step
+        const monIcon = document.getElementById('step-monitors-icon');
+        const anyEnabled = Object.values(data.monitors).some(v => v);
+        if (anyEnabled) {
+            monIcon.innerHTML = '&#9745;';
+            monIcon.className = 'step-icon step-done';
+        }
+
+        // Start step
+        const startIcon = document.getElementById('step-start-icon');
+        if (data.database_exists) {
+            startIcon.innerHTML = '&#9745;';
+            startIcon.className = 'step-icon step-done';
+        }
+
+        // Monitor bar
+        renderMonitorBar(data.monitors);
+    } catch (err) {
+        console.error('Failed to load setup status:', err);
+        section.style.display = 'none';
+    }
+}
+
+function renderMonitorBar(monitors) {
+    if (!monitors) return;
+    for (const [key, enabled] of Object.entries(monitors)) {
+        const dot = document.getElementById(`dot-${key}`);
+        if (dot) {
+            dot.className = 'monitor-dot ' + (enabled ? 'dot-enabled' : 'dot-disabled');
+        }
+    }
+}
+
+function dismissSetup() {
+    localStorage.setItem('setup-dismissed', 'true');
+    const section = document.getElementById('setup-section');
+    if (section) section.style.display = 'none';
+}
+
+// --- Settings Page ---
+async function loadSettings() {
+    try {
+        const [configRes, statusRes] = await Promise.all([
+            fetch('/api/config'),
+            fetch('/api/setup-status'),
+        ]);
+        const config = await configRes.json();
+        const status = await statusRes.json();
+
+        // Platform and permissions
+        const platformEl = document.getElementById('settings-platform');
+        if (platformEl) {
+            platformEl.textContent = `Detected platform: ${status.platform}`;
+        }
+
+        const permList = document.getElementById('settings-permissions');
+        if (permList && status.permissions.length > 0) {
+            permList.innerHTML = status.permissions.map(p => `
+                <div class="permission-item ${p.satisfied === false ? 'permission-needed' : ''}">
+                    <div class="permission-name">${escapeHtml(p.name)} ${p.satisfied !== undefined ? (p.satisfied ? '<span class="perm-ok">OK</span>' : '<span class="perm-missing">Needed</span>') : ''}</div>
+                    <div class="permission-desc">${escapeHtml(p.description)}</div>
+                    <div class="permission-how">${escapeHtml(p.how)}</div>
+                    <div class="permission-for">Required for: ${p.required_for.join(', ')}</div>
+                </div>
+            `).join('');
+        } else if (permList) {
+            permList.innerHTML = '<p class="placeholder">No special permissions needed on this platform.</p>';
+        }
+
+        // API key status
+        const apiStatus = document.getElementById('api-key-status');
+        if (apiStatus) {
+            apiStatus.textContent = config.analysis.anthropic_api_key_set
+                ? 'API key is configured.'
+                : 'No API key configured yet.';
+            apiStatus.className = 'settings-field-status ' + (config.analysis.anthropic_api_key_set ? 'status-ok' : 'status-warn');
+        }
+
+        // Model select
+        const modelSelect = document.getElementById('model-select');
+        if (modelSelect) {
+            modelSelect.value = config.analysis.model || 'claude-sonnet-4-6';
+        }
+
+        // Monitor toggles
+        setToggle('toggle-keyboard', config.monitoring.keyboard.enabled);
+        setToggle('toggle-applications', config.monitoring.applications.enabled);
+        setToggle('toggle-screenshots', config.monitoring.screenshots.enabled);
+        setToggle('toggle-communications', config.monitoring.communications.enabled);
+
+        // Screenshot settings
+        const ssInterval = document.getElementById('screenshot-interval');
+        if (ssInterval) ssInterval.value = config.monitoring.screenshots.interval_seconds;
+
+        const ssQuality = document.getElementById('screenshot-quality');
+        if (ssQuality) ssQuality.value = config.monitoring.screenshots.quality;
+
+        const ssStorage = document.getElementById('screenshot-storage');
+        if (ssStorage) ssStorage.value = config.monitoring.screenshots.max_storage_gb;
+
+    } catch (err) {
+        console.error('Failed to load settings:', err);
+    }
+}
+
+function setToggle(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.checked = value;
+}
+
+function toggleApiKeyVisibility() {
+    const input = document.getElementById('api-key-input');
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function saveSettings() {
+    const btn = document.getElementById('save-settings-btn');
+    const status = document.getElementById('save-status');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+    }
+
+    const apiKey = document.getElementById('api-key-input')?.value || '';
+    const model = document.getElementById('model-select')?.value || 'claude-sonnet-4-6';
+
+    const config = {
+        monitoring: {
+            keyboard: {
+                enabled: document.getElementById('toggle-keyboard')?.checked ?? true,
+            },
+            applications: {
+                enabled: document.getElementById('toggle-applications')?.checked ?? true,
+            },
+            screenshots: {
+                enabled: document.getElementById('toggle-screenshots')?.checked ?? true,
+                interval_seconds: parseInt(document.getElementById('screenshot-interval')?.value || '300'),
+                quality: parseInt(document.getElementById('screenshot-quality')?.value || '50'),
+                max_storage_gb: parseInt(document.getElementById('screenshot-storage')?.value || '5'),
+            },
+            communications: {
+                enabled: document.getElementById('toggle-communications')?.checked ?? true,
+            },
+        },
+        analysis: {
+            model: model,
+        },
+    };
+
+    // Only include API key if user entered one
+    if (apiKey) {
+        config.analysis.anthropic_api_key = apiKey;
+    }
+
+    try {
+        const response = await fetch('/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config),
+        });
+        const result = await response.json();
+
+        if (result.error) {
+            if (status) {
+                status.textContent = 'Error: ' + result.error;
+                status.className = 'settings-save-status status-error';
+            }
+        } else {
+            if (status) {
+                status.textContent = 'Settings saved. Restart the monitor to apply changes.';
+                status.className = 'settings-save-status status-ok';
+            }
+            // Reload settings to reflect saved state
+            loadSettings();
+        }
+    } catch (err) {
+        if (status) {
+            status.textContent = 'Failed to save settings.';
+            status.className = 'settings-save-status status-error';
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Save Settings';
+        }
+    }
+}
+
 // --- Screenshot modal ---
 function showScreenshot(src) {
     const overlay = document.createElement('div');

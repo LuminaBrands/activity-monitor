@@ -598,6 +598,364 @@ body {
     border-radius: 4px;
 }
 
+/* Setup / Getting Started */
+.setup-card {
+    border-color: var(--accent-muted);
+}
+
+.setup-intro {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+
+.setup-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.setup-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.step-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.step-icon.step-done {
+    color: var(--green);
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.step-detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.step-detail a {
+    color: var(--accent-hover);
+    text-decoration: none;
+}
+
+.step-detail a:hover {
+    text-decoration: underline;
+}
+
+.step-detail code {
+    background: var(--bg-hover);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+/* Permissions */
+.permissions-panel {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.permissions-panel h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.permission-item {
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.permission-item.permission-needed {
+    border-color: var(--yellow);
+}
+
+.permission-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+}
+
+.perm-ok {
+    color: var(--green);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.perm-missing {
+    color: var(--yellow);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.permission-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+}
+
+.permission-how {
+    font-size: 0.8rem;
+    color: var(--accent-hover);
+    margin-bottom: 0.2rem;
+}
+
+.permission-for {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Monitor status bar */
+.monitor-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.monitor-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.monitor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-enabled {
+    background: var(--green);
+}
+
+.dot-disabled {
+    background: var(--text-muted);
+}
+
+.monitor-bar-settings {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.monitor-bar-settings:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+/* Settings page */
+.settings-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.settings-desc a {
+    color: var(--accent-hover);
+    text-decoration: none;
+}
+
+.settings-desc a:hover {
+    text-decoration: underline;
+}
+
+.settings-platform-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.permissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-field {
+    margin-bottom: 1rem;
+}
+
+.settings-field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+}
+
+.settings-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.5rem 0.7rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: inherit;
+}
+
+.settings-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.settings-input-sm {
+    max-width: 160px;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.input-row .settings-input {
+    flex: 1;
+}
+
+.settings-field-status {
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+}
+
+.status-ok {
+    color: var(--green);
+}
+
+.status-warn {
+    color: var(--yellow);
+}
+
+.status-error {
+    color: var(--red);
+}
+
+/* Toggle switches */
+.settings-toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.toggle-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.toggle-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--bg-hover);
+    border-radius: 24px;
+    transition: 0.2s;
+}
+
+.slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+input:checked + .slider {
+    background: var(--accent);
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
+    background: white;
+}
+
+.settings-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.settings-save-status {
+    font-size: 0.85rem;
+}
+
+.btn-sm {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {

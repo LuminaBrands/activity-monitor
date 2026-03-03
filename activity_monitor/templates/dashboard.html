@@ -3,8 +3,78 @@
 
 {% block content %}
 <div class="page-header">
-    <h2>Daily Dashboard</h2>
+    <h2>Activity Monitor</h2>
     <span class="date-display" id="current-date">{{ today }}</span>
+</div>
+
+<!-- Setup / Getting Started section -->
+<div class="card setup-card" id="setup-section" style="display: none;">
+    <div class="card-header">
+        <h3>Getting Started</h3>
+        <button class="btn btn-secondary btn-sm" onclick="dismissSetup()">Dismiss</button>
+    </div>
+    <p class="setup-intro">Complete these steps to start tracking your activity.</p>
+
+    <div class="setup-checklist" id="setup-checklist">
+        <div class="setup-step" id="step-permissions">
+            <span class="step-icon" id="step-permissions-icon">&#9744;</span>
+            <div class="step-content">
+                <div class="step-title">Grant Desktop Permissions</div>
+                <div class="step-detail" id="permissions-detail">Checking...</div>
+            </div>
+        </div>
+
+        <div class="setup-step" id="step-api-key">
+            <span class="step-icon" id="step-api-key-icon">&#9744;</span>
+            <div class="step-content">
+                <div class="step-title">Configure Anthropic API Key</div>
+                <div class="step-detail">Required for AI summaries and planning. <a href="/settings">Set up in Settings</a></div>
+            </div>
+        </div>
+
+        <div class="setup-step" id="step-monitors">
+            <span class="step-icon" id="step-monitors-icon">&#9744;</span>
+            <div class="step-content">
+                <div class="step-title">Choose Your Monitors</div>
+                <div class="step-detail">Select which activity to track. <a href="/settings">Configure in Settings</a></div>
+            </div>
+        </div>
+
+        <div class="setup-step" id="step-start">
+            <span class="step-icon" id="step-start-icon">&#9744;</span>
+            <div class="step-content">
+                <div class="step-title">Start Monitoring</div>
+                <div class="step-detail">Run <code>python main.py start</code> from your terminal to begin tracking.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform permissions detail -->
+    <div class="permissions-panel" id="permissions-panel" style="display: none;">
+        <h4>Required Permissions</h4>
+        <div id="permissions-list"></div>
+    </div>
+</div>
+
+<!-- Monitor status bar -->
+<div class="monitor-bar" id="monitor-bar">
+    <div class="monitor-bar-item" id="bar-keyboard">
+        <span class="monitor-dot" id="dot-keyboard"></span>
+        <span>Keyboard</span>
+    </div>
+    <div class="monitor-bar-item" id="bar-applications">
+        <span class="monitor-dot" id="dot-applications"></span>
+        <span>Applications</span>
+    </div>
+    <div class="monitor-bar-item" id="bar-screenshots">
+        <span class="monitor-dot" id="dot-screenshots"></span>
+        <span>Screenshots</span>
+    </div>
+    <div class="monitor-bar-item" id="bar-communications">
+        <span class="monitor-dot" id="dot-communications"></span>
+        <span>Communications</span>
+    </div>
+    <a href="/settings" class="monitor-bar-settings">Settings</a>
 </div>
 
 <div class="stats-grid" id="stats-grid">
@@ -96,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const date = params.get('date') || '{{ today }}';
     document.getElementById('current-date').textContent = date;
     loadDashboard(date);
+    loadSetupStatus();
 });
 </script>
 {% endblock %}

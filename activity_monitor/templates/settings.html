@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Settings - Activity Monitor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Settings</h2>
+</div>
+
+<!-- Permissions section -->
+<div class="card">
+    <h3>Desktop Permissions</h3>
+    <p class="settings-desc">These permissions are required for the monitors to work on your system.</p>
+    <div id="settings-platform" class="settings-platform-label"></div>
+    <div id="settings-permissions" class="permissions-list">
+        <p class="placeholder">Loading...</p>
+    </div>
+</div>
+
+<!-- API Key section -->
+<div class="card">
+    <h3>Anthropic API Key</h3>
+    <p class="settings-desc">Required for AI-powered summaries and planning. Get a key at <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+    <div class="settings-field">
+        <label for="api-key-input">API Key</label>
+        <div class="input-row">
+            <input type="password" id="api-key-input" placeholder="sk-ant-..." class="settings-input">
+            <button class="btn btn-secondary btn-sm" onclick="toggleApiKeyVisibility()">Show</button>
+        </div>
+        <div class="settings-field-status" id="api-key-status"></div>
+    </div>
+    <div class="settings-field">
+        <label for="model-select">AI Model</label>
+        <select id="model-select" class="settings-input">
+            <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (Recommended)</option>
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (Faster, cheaper)</option>
+            <option value="claude-opus-4-6">Claude Opus 4.6 (Most capable)</option>
+        </select>
+    </div>
+</div>
+
+<!-- Monitors section -->
+<div class="card">
+    <h3>Monitors</h3>
+    <p class="settings-desc">Choose which activity to track. Changes take effect on next restart.</p>
+
+    <div class="settings-toggle-group">
+        <div class="settings-toggle">
+            <div>
+                <div class="toggle-label">Keyboard Activity</div>
+                <div class="toggle-desc">Track typing volume per application (keystrokes are not recorded)</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-keyboard" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="settings-toggle">
+            <div>
+                <div class="toggle-label">Application Tracking</div>
+                <div class="toggle-desc">Record which applications and windows are active</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-applications" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="settings-toggle">
+            <div>
+                <div class="toggle-label">Screenshots</div>
+                <div class="toggle-desc">Capture periodic screenshots of your screen</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-screenshots" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="settings-toggle" id="screenshot-settings" style="padding-left: 2rem;">
+            <div class="settings-field" style="margin-bottom: 0;">
+                <label for="screenshot-interval">Capture every</label>
+                <select id="screenshot-interval" class="settings-input settings-input-sm">
+                    <option value="60">1 minute</option>
+                    <option value="120">2 minutes</option>
+                    <option value="300" selected>5 minutes</option>
+                    <option value="600">10 minutes</option>
+                    <option value="900">15 minutes</option>
+                </select>
+            </div>
+            <div class="settings-field" style="margin-bottom: 0; margin-left: 1.5rem;">
+                <label for="screenshot-quality">Quality</label>
+                <select id="screenshot-quality" class="settings-input settings-input-sm">
+                    <option value="30">Low (smaller files)</option>
+                    <option value="50" selected>Medium</option>
+                    <option value="75">High</option>
+                    <option value="95">Maximum</option>
+                </select>
+            </div>
+            <div class="settings-field" style="margin-bottom: 0; margin-left: 1.5rem;">
+                <label for="screenshot-storage">Max storage</label>
+                <select id="screenshot-storage" class="settings-input settings-input-sm">
+                    <option value="1">1 GB</option>
+                    <option value="2">2 GB</option>
+                    <option value="5" selected>5 GB</option>
+                    <option value="10">10 GB</option>
+                    <option value="20">20 GB</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="settings-toggle">
+            <div>
+                <div class="toggle-label">Communication Tracking</div>
+                <div class="toggle-desc">Detect usage of Slack, Teams, Discord, email clients</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-communications" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- Save button -->
+<div class="settings-actions">
+    <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()">Save Settings</button>
+    <span class="settings-save-status" id="save-status"></span>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+});
+</script>
+{% endblock %}
