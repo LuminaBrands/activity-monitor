@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Summary - Activity Monitor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Daily Summary</h2>
+    <div class="header-actions">
+        <span class="date-display" id="current-date">{{ date }}</span>
+        <button class="btn btn-primary" onclick="generateSummary()">Regenerate</button>
+    </div>
+</div>
+
+<div class="card" id="summary-card">
+    <div id="summary-content" class="summary-content">
+        <p class="placeholder">Loading summary...</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Plan Ahead</h3>
+        <button class="btn btn-secondary" onclick="generatePlan()">Generate Plan</button>
+    </div>
+    <div id="plan-content" class="summary-content">
+        <p class="placeholder">Click "Generate Plan" to get a plan for the next few days.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date') || '{{ date }}';
+    document.getElementById('current-date').textContent = date;
+    loadSummary(date);
+});
+</script>
+{% endblock %}

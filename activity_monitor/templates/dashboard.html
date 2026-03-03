@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Activity Monitor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Daily Dashboard</h2>
+    <span class="date-display" id="current-date">{{ today }}</span>
+</div>
+
+<div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value" id="stat-active-minutes">--</div>
+        <div class="stat-label">Active Minutes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-keystrokes">--</div>
+        <div class="stat-label">Keystrokes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-apps">--</div>
+        <div class="stat-label">Applications</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-screenshots">--</div>
+        <div class="stat-label">Screenshots</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-comms">--</div>
+        <div class="stat-label">Conversations</div>
+    </div>
+</div>
+
+<div class="grid-2col">
+    <div class="card">
+        <h3>Top Applications</h3>
+        <div id="top-apps" class="app-list">
+            <p class="placeholder">Loading...</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Recent Communications</h3>
+        <div id="recent-comms" class="comm-list">
+            <p class="placeholder">Loading...</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Recent Screenshots</h3>
+    <div id="screenshots-grid" class="screenshots-grid">
+        <p class="placeholder">Loading...</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>AI Summary</h3>
+        <button class="btn btn-primary" id="generate-summary-btn" onclick="generateSummary()">
+            Generate Summary
+        </button>
+    </div>
+    <div id="summary-content" class="summary-content">
+        <p class="placeholder">Click "Generate Summary" to create an AI-powered summary of your day.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Plan Ahead</h3>
+        <button class="btn btn-secondary" id="generate-plan-btn" onclick="generatePlan()">
+            Generate Plan
+        </button>
+    </div>
+    <div id="plan-content" class="summary-content">
+        <p class="placeholder">Click "Generate Plan" to get an AI-powered plan for the next few days.</p>
+    </div>
+</div>
+
+{% if dates %}
+<div class="card">
+    <h3>Recent Days</h3>
+    <div class="date-list">
+        {% for date in dates %}
+        <a href="/?date={{ date }}" class="date-chip {% if date == today %}active{% endif %}">{{ date }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date') || '{{ today }}';
+    document.getElementById('current-date').textContent = date;
+    loadDashboard(date);
+});
+</script>
+{% endblock %}

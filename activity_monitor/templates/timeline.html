@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Timeline - Activity Monitor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Activity Timeline</h2>
+    <span class="date-display" id="current-date">{{ date }}</span>
+</div>
+
+<div class="timeline-container" id="timeline">
+    <p class="placeholder">Loading timeline...</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date') || '{{ date }}';
+    document.getElementById('current-date').textContent = date;
+    loadTimeline(date);
+});
+</script>
+{% endblock %}

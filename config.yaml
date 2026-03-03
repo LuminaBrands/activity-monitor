@@ -1,0 +1,52 @@
+# Activity Monitor Configuration
+
+monitoring:
+  # Keyboard monitoring
+  keyboard:
+    enabled: true
+    # Don't log raw keystrokes for privacy — only track typing activity counts
+    log_raw_keys: false
+
+  # Application tracking
+  applications:
+    enabled: true
+    poll_interval_seconds: 5
+
+  # Screenshot capture
+  screenshots:
+    enabled: true
+    interval_seconds: 300  # Every 5 minutes
+    storage_path: screenshots
+    quality: 50  # JPEG quality (1-100), lower = smaller files
+    max_storage_gb: 5
+
+  # Communication tracking (detects active Slack/email/Teams windows)
+  communications:
+    enabled: true
+    tracked_apps:
+      - slack
+      - microsoft teams
+      - discord
+      - outlook
+      - thunderbird
+      - gmail
+      - mail
+
+# AI summary generation
+analysis:
+  # Set ANTHROPIC_API_KEY env var or in config.local.yaml
+  anthropic_api_key: ""
+  model: claude-sonnet-4-6
+  # Auto-generate summary at end of day
+  auto_summary_time: "17:30"
+  # Planning horizon in days
+  planning_days: 3
+
+# Web dashboard
+dashboard:
+  host: "127.0.0.1"
+  port: 5050
+
+# Storage
+storage:
+  database_path: data/activity_monitor.db

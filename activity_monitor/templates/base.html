@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Activity Monitor{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h1>Activity Monitor</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Dashboard</a></li>
+            <li><a href="/timeline" class="{% if '/timeline' in request.path %}active{% endif %}">Timeline</a></li>
+            <li><a href="/summary" class="{% if '/summary' in request.path %}active{% endif %}">Summary</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="date-picker">
+                <label for="nav-date">Date</label>
+                <input type="date" id="nav-date" value="{{ today if today else '' }}">
+            </div>
+            <div class="monitor-status" id="monitor-status">
+                <span class="status-dot"></span>
+                <span>Monitoring</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
