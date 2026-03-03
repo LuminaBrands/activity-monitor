@@ -36,6 +36,11 @@ def create_app(config: dict | None = None) -> Flask:
         date = request.args.get("date", datetime.utcnow().strftime("%Y-%m-%d"))
         return render_template("timeline.html", date=date)
 
+    @app.route("/chat-history")
+    def chat_history():
+        date = request.args.get("date", datetime.utcnow().strftime("%Y-%m-%d"))
+        return render_template("chat-history.html", date=date)
+
     @app.route("/summary")
     def summary():
         date = request.args.get("date", datetime.utcnow().strftime("%Y-%m-%d"))
@@ -52,6 +57,44 @@ def create_app(config: dict | None = None) -> Flask:
     def api_timeline(date):
         events = db.get_timeline_for_date(date)
         return jsonify(events)
+
+    @app.route("/api/chat-history/<date>")
+    def api_chat_history(date):
+        activity = db.get_activity_for_date(date)
+        comms = activity["communications"]
+
+        # Aggregate by application
+        by_app: dict[str, dict] = {}
+        for c in comms:
+            app_name = c["application"]
+            if app_name not in by_app:
+                by_app[app_name] = {"name": app_name, "sessions": 0, "total_minutes": 0}
+            by_app[app_name]["sessions"] += 1
+            by_app[app_name]["total_minutes"] = round(
+                by_app[app_name]["total_minutes"] + c["duration_minutes"], 1
+            )
+
+        apps_summary = sorted(by_app.values(), key=lambda a: -a["total_minutes"])
+        total_minutes = round(sum(c["duration_minutes"] for c in comms), 1)
+        unique_apps = len(by_app)
+
+        # Get conversations recap from stored summary
+        stored = db.get_summary(date)
+        conversations_recap = None
+        if stored and stored.get("conversations"):
+            conversations_recap = stored["conversations"]
+
+        return jsonify({
+            "date": date,
+            "communications": comms,
+            "by_app": apps_summary,
+            "conversations_recap": conversations_recap,
+            "stats": {
+                "total_sessions": len(comms),
+                "total_minutes": total_minutes,
+                "unique_apps": unique_apps,
+            },
+        })
 
     @app.route("/api/summary/<date>")
     def api_summary(date):

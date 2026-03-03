@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Chat History - Activity Monitor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Chat History</h2>
+    <span class="date-display" id="current-date">{{ date }}</span>
+</div>
+
+<div class="chat-stats-grid" id="chat-stats-grid">
+    <div class="stat-card">
+        <div class="stat-value" id="chat-stat-sessions">--</div>
+        <div class="stat-label">Sessions</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="chat-stat-total-time">--</div>
+        <div class="stat-label">Total Minutes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="chat-stat-apps">--</div>
+        <div class="stat-label">Apps Used</div>
+    </div>
+</div>
+
+<div class="grid-2col">
+    <div class="card">
+        <h3>By Application</h3>
+        <div id="chat-by-app" class="app-list">
+            <p class="placeholder">Loading...</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>AI Conversations Recap</h3>
+        <div id="chat-conversations-recap" class="summary-content">
+            <p class="placeholder">Generate a summary from the Summary page to see an AI recap of your conversations.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>All Communication Sessions</h3>
+    <div id="chat-history-list" class="chat-history-list">
+        <p class="placeholder">Loading...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get('date') || '{{ date }}';
+    document.getElementById('current-date').textContent = date;
+    loadChatHistory(date);
+});
+</script>
+{% endblock %}

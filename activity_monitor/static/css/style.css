@@ -549,6 +549,55 @@ body {
     border-radius: 8px;
 }
 
+/* Chat History */
+.chat-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.chat-history-list .chat-history-item {
+    padding: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+.chat-history-list .chat-history-item:last-child {
+    border-bottom: none;
+}
+
+.chat-history-list .chat-history-item:hover {
+    background: var(--bg-hover);
+}
+
+.chat-history-app {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--blue);
+    margin-bottom: 0.2rem;
+}
+
+.chat-history-context {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+}
+
+.chat-history-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.chat-history-duration {
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple);
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {
